@@ -12,7 +12,7 @@ Sweeps prepareSweepClass()
     sweeps.maxdim() = Args::global().getInt("maxDim");
     sweeps.mindim() = Args::global().getInt("minDim");
     sweeps.cutoff() = Args::global().getReal("cutoff");
-    sweeps.niter() = 10;
+    sweeps.niter() = Args::global().getReal("niter");
     return sweeps;
 }
 
@@ -50,7 +50,7 @@ double calculateMz(const Electron &sites, const MPS &psi)
         Mz += 0.5*pow(-1,i+1),"Sz",i;
     }
 
-    return inner(psi,toMPO(Mz),psi);
+    return innerC(psi,toMPO(Mz),psi).real();
 }
 
 

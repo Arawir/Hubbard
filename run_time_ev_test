@@ -1,0 +1,14 @@
+#PBS -S /bin/bash
+#PBS -q main
+#PBS -l walltime=48:10:00
+#PBS -l select=1:ncpus=1:mem=56GB
+#PBS -o L8U${U}.out
+#PBS -e L8U${U}.err
+
+cd $PBS_O_WORKDIR
+
+echo "U: ${U}";
+./Hubbard t=1.0 U=${U} time=16 dTime=0.05 L=8 exp=2 state=Up-Up-Up-Up-Dn-Dn-Dn-Dn Silent=1 maxDim=1600 > L8U${U}.data
+
+qstat -f $PBS_JOBID | grep resources_used.vmem
+qstat -f $PBS_JOBID | grep resources_used.walltime

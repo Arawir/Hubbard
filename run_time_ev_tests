@@ -1,0 +1,11 @@
+#!/bin/bash
+
+qsub -v U='0' -N L8U0 run_time_ev_test
+qsub -v U='1' -N L8U0 run_time_ev_test
+qsub -v U='2' -N L8U0 run_time_ev_test
+qsub -v U='4' -N L8U0 run_time_ev_test
+qsub -v U='6' -N L8U0 run_time_ev_test
+qsub -v U='8' -N L8U0 run_time_ev_test
+
+
+

@@ -2,6 +2,10 @@
 #include "interface.h"
 #include "tdvp.h"
 
+#include <complex>
+
+#define im std::complex<double>{0.0,1.0}
+
 std::vector<Param> Parameters::params{ };
 
 void exp1()
@@ -61,7 +65,7 @@ void exp2()
     while(time <= maxTime+0.001){
         std::cout << time << " ";
         std::cout << calculateMz(sites,psi) << std::endl;
-        tdvp(psi,H,-dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
+        tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
 
         time += dTime;
     }
@@ -101,10 +105,12 @@ int main(int argc, char *argv[])
     Params.add("sweeps","int","4");
     Params.add("minDim","int","1");
     Params.add("maxDim","int","100");
+    Params.add("niter","int","10");
     Params.add("state","string","Up-Dn");
-    Params.add("conNf","bool","0");
-    Params.add("conSz","bool","0");
+    Params.add("ConserveNf","bool","0");
+    Params.add("ConserveSz","bool","0");
     Params.add("exp","int","1");
+    Params.add("ConserveQNs","bool","0");
 
     Params.set(argc,argv);
 
