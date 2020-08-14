@@ -5,44 +5,44 @@
 
 if [ ${U} -eq 0 ]
 then
-#PBS -o L8U0.out
-#PBS -e L8U0.err
-#PBS -n L8U0
+    #PBS -o L8U0.out
+    #PBS -e L8U0.err
+    #PBS -n L8U0
 fi
 
 if [ ${U} -eq 1 ]
 then
-#PBS -o L8U1.out
-#PBS -e L8U1.err
-#PBS -n L8U1
+    #PBS -o L8U1.out
+    #PBS -e L8U1.err
+    #PBS -n L8U1
 fi
 
 if [ ${U} -eq 2 ]
 then
-#PBS -o L8U2.out
-#PBS -e L8U2.err
-#PBS -n L8U2
+    #PBS -o L8U2.out
+    #PBS -e L8U2.err
+    #PBS -n L8U2
 fi
 
 if [ ${U} -eq 4 ]
 then
-#PBS -o L8U4.out
-#PBS -e L8U4.err
-#PBS -n L8U4
+    #PBS -o L8U4.out
+    #PBS -e L8U4.err
+    #PBS -n L8U4
 fi
 
 if [ ${U} -eq 6 ]
 then
-#PBS -o L8U6.out
-#PBS -e L8U6.err
-#PBS -n L8U6
+    #PBS -o L8U6.out
+    #PBS -e L8U6.err
+    #PBS -n L8U6
 fi
 
 if [ ${U} -eq 8 ]
 then
-#PBS -o L8U8.out
-#PBS -e L8U8.err
-#PBS -n L8U8
+    #PBS -o L8U8.out
+    #PBS -e L8U8.err
+    #PBS -n L8U8
 fi
 
 
