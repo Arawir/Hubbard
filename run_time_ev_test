@@ -8,7 +8,7 @@ cd $PBS_O_WORKDIR
 echo "U: ${U}";
 echo "cutoff: ${cutoff}";
 echo "L: ${L}";
-./Hubbard t=1.0 U=${U} time=20 dTime=0.05 L=${L} cutoff=${cutoff} exp=2 state=Up-Dn Silent=1 maxDim=1600  niter=40 ConserveQNs=1 > NillL${l}U${U}E${cutoff}.data
+./Hubbard t=1.0 U=${U} time=20 dTime=0.05 L=${L} cutoff=${cutoff} exp=2 state=Up-Dn Silent=1 maxDim=1600  niter=40 ConserveQNs=1 > NillL${L}U${U}E${cutoff}.data
 
 qstat -f $PBS_JOBID | grep resources_used.vmem
 qstat -f $PBS_JOBID | grep resources_used.walltime
