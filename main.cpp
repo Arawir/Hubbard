@@ -58,7 +58,7 @@ void exp2()
         std::cout << time << " ";
         std::cout << calculateMz(sites,psi) << " ";
         std::cout << calculateDoublon(sites,psi) << std::endl;
-        tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",getI("L")/2});
+        tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
 
         time += dTime;
     }
