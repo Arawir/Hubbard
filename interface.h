@@ -192,7 +192,7 @@ private:
     {
         std::cout << "--------------------";
         std::cout << text;
-        for(uint i=0; i<60-(int)text.size(); i++){
+        for(int i=0; i<60-(int)text.size(); i++){
            std::cout << "-";
         }
 
