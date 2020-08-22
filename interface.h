@@ -6,22 +6,22 @@
 
 double getD(std::string data)
 {
-    Args::global().getReal(data);
+    return Args::global().getReal(data);
 }
 
 double getR(std::string data)
 {
-    Args::global().getReal(data);
+    return Args::global().getReal(data);
 }
 
 int getI(std::string data)
 {
-    Args::global().getInt(data);
+    return Args::global().getInt(data);
 }
 
 bool getB(std::string data)
 {
-    Args::global().getBool(data);
+    return Args::global().getBool(data);
 }
 
 struct Param{
@@ -192,7 +192,7 @@ private:
     {
         std::cout << "--------------------";
         std::cout << text;
-        for(int i=0; i<60-text.size(); i++){
+        for(uint i=0; i<60-(int)text.size(); i++){
            std::cout << "-";
         }
 
