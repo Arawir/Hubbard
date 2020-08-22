@@ -2,7 +2,27 @@
 #define INTERFACE
 
 #include "itensor/all.h"
+#include <ctime>
 
+double getD(std::string data)
+{
+    Args::global().getReal(data);
+}
+
+double getR(std::string data)
+{
+    Args::global().getReal(data);
+}
+
+int getI(std::string data)
+{
+    Args::global().getInt(data);
+}
+
+bool getB(std::string data)
+{
+    Args::global().getBool(data);
+}
 
 struct Param{
     std::string name;
@@ -34,7 +54,7 @@ struct Param{
 
 class Parameters{
 private:
-    static std::vector<Param> params;
+    std::vector<Param> params;
 
 public:
     Parameters(){ }
@@ -145,6 +165,43 @@ itensor::MPS prepareInitState(Electron &sites)
 
     return itensor::MPS(state);
 }
+
+
+class Controller
+{
+public:
+    clock_t  time0, timeLast;
+public:
+
+    Controller() :
+        time0{ clock() }
+      , timeLast{ clock() }
+    {
+
+    }
+    ~Controller() = default;
+
+    void addPoint(std::string text)
+    {
+        writePointInfo(text);
+
+    }
+
+private:
+    void writePointInfo(std::string text)
+    {
+        std::cout << "--------------------";
+        std::cout << text;
+        for(int i=0; i<60-text.size(); i++){
+           std::cout << "-";
+        }
+
+        std::cout << "(" << (clock()-time0)/(double)CLOCKS_PER_SEC << " [s],"
+                  << (clock()-timeLast)/(double)CLOCKS_PER_SEC << " [s])";
+        std::cout << std::endl;
+        timeLast = clock();
+    }
+} ExpCon;
 
 #endif // INTERFACE
 

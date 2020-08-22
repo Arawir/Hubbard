@@ -6,34 +6,25 @@
 
 #define im std::complex<double>{0.0,1.0}
 
-std::vector<Param> Parameters::params{ };
-
 void exp1()
 {
-    printfln("------------------------------ Initial State -----------------------------");
-    clock_t  timecpu = clock();
+    ExpCon.addPoint("Initialization");
 
     seedRNG(1);
-    double t = Args::global().getReal("t");
-    double U = Args::global().getReal("U");
-    int L = Args::global().getInt("L");
-
-    auto sites = Electron( Args::global().getInt("L") );
+    auto sites = Electron( getI("L") );
     auto psi = prepareInitState(sites);
-    auto H = hubbardHamiltonian(sites,L,t,U);
+    auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
     auto sweeps = prepareSweepClass();
 
     std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
     std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
-    std::cout << "  Time: " << (clock()-timecpu)/(double)CLOCKS_PER_SEC << " [s]" << std::endl;
 
-    printfln("------------------ DMRG ----------------");
-    timecpu = clock();
+    ExpCon.addPoint("Starting DMRG");
     dmrg(psi,H,sweeps);
 
+    ExpCon.addPoint("Output data");
     std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
     std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
-    std::cout << "  Time: " << (clock()-timecpu)/(double)CLOCKS_PER_SEC << " [s]" << std::endl;
 }
 
 void exp2()
@@ -56,6 +47,7 @@ void exp2()
 
     std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
     std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
+    std::cout << "  Nupdn: " << calculateDoublon(sites,psi) << std::endl;
     std::cout << "  Time: " << (clock()-timecpu)/(double)CLOCKS_PER_SEC << " [s]" << std::endl;
 
     printfln("------------------ Time evolution of initial state ----------------");
@@ -64,8 +56,9 @@ void exp2()
     double time = 0.0;
     while(time <= maxTime+0.001){
         std::cout << time << " ";
-        std::cout << calculateMz(sites,psi) << std::endl;
-        tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
+        std::cout << calculateMz(sites,psi) << " ";
+        std::cout << calculateDoublon(sites,psi) << std::endl;
+        tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",getI("L")/2});
 
         time += dTime;
     }
@@ -76,7 +69,7 @@ void exp2()
 
 void run()
 {
-    switch (Args::global().getInt("exp")){
+    switch (getI("exp")){
     case 1 :
         exp1();
         break;
@@ -88,6 +81,7 @@ void run()
         break;
     }
 }
+
 
 int main(int argc, char *argv[])
 {

@@ -53,6 +53,17 @@ double calculateMz(const Electron &sites, const MPS &psi)
     return innerC(psi,toMPO(Mz),psi).real();
 }
 
+double calculateDoublon(const Electron &sites, const MPS &psi)
+{
+    auto D = AutoMPO(sites);
+
+    for(int i=1; i<=psi.length(); i++){
+        D += 1.0,"Nupdn",i;
+    }
+
+    return innerC(psi,toMPO(D),psi).real();
+}
+
 
 #endif // MODEL
 
