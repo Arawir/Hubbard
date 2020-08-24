@@ -1,6 +1,10 @@
 #include "model.h"
 #include "interface.h"
 #include "tdvp.h"
+#include "itensor/util/parallel.h"
+#include "itensor/all.h"
+
+using namespace itensor;
 
 #include <complex>
 #define im std::complex<double>{0.0,1.0}
