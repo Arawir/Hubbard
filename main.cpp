@@ -9,6 +9,8 @@
 int main(int argc, char *argv[])
 {
 
+    Environment env(argc,argv);
+
     Experiments("DMRG") = [](){
         ExpCon.addPoint("Initialization");
 
