@@ -3,6 +3,7 @@
 
 #include "itensor/all.h"
 #include <ctime>
+#include <functional>
 
 double getD(std::string data)
 {
@@ -22,6 +23,11 @@ int getI(std::string data)
 bool getB(std::string data)
 {
     return Args::global().getBool(data);
+}
+
+std::string getS(std::string data)
+{
+    return Args::global().getString(data);
 }
 
 struct Param{
@@ -166,6 +172,55 @@ itensor::MPS prepareInitState(Electron &sites)
     return itensor::MPS(state);
 }
 
+struct Experiment
+{
+    std::string name;
+    std::function<void(void)> experiment;
+
+    Experiment(std::string nName) :
+        name{nName}
+    {
+
+    }
+
+    void operator = (std::function<void(void)> exp)
+    {
+        experiment = exp;
+    }
+};
+
+class ExperimentsClass
+{
+private:
+    std::vector<Experiment> experiments;
+public:
+    ExperimentsClass() :
+        experiments {  }
+    {
+
+    }
+    ~ExperimentsClass() = default;
+
+    Experiment& operator () (std::string name)
+    {
+        for(auto& exp : experiments){
+            if(exp.name == name){ return exp; }
+        }
+        experiments.push_back( Experiment{name} );
+        return experiments.back();
+    }
+
+    void run()
+    {
+        std::string name = getS("exp");
+        for(auto& exp : experiments){
+            if(exp.name == name){ exp.experiment(); }
+        }
+        std::cerr << "ERROR: unknown experiment name!" << std::endl;
+        assert(false);
+    }
+
+} Experiments;
 
 class Controller
 {
@@ -184,7 +239,6 @@ public:
     void addPoint(std::string text)
     {
         writePointInfo(text);
-
     }
 
 private:
