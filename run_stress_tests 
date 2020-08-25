@@ -1,0 +1,37 @@
+#!/bin/bash
+
+qsub -v cutoff='1E-6',L='4' -N SL4E6 run_stress_test
+qsub -v cutoff='1E-6',L='8' -N SL8E6 run_stress_test
+qsub -v cutoff='1E-6',L='12' -N SL12E6 run_stress_test
+qsub -v cutoff='1E-6',L='16' -N SL16E6 run_stress_test
+qsub -v cutoff='1E-6',L='20' -N SL20E6 run_stress_test
+qsub -v cutoff='1E-6',L='24' -N SL24E6 run_stress_test
+qsub -v cutoff='1E-6',L='28' -N SL28E6 run_stress_test
+qsub -v cutoff='1E-6',L='32' -N SL32E6 run_stress_test
+qsub -v cutoff='1E-6',L='36' -N SL36E6 run_stress_test
+qsub -v cutoff='1E-6',L='40' -N SL40E6 run_stress_test
+qsub -v cutoff='1E-6',L='44' -N SL44E6 run_stress_test
+qsub -v cutoff='1E-6',L='48' -N SL48E6 run_stress_test
+qsub -v cutoff='1E-6',L='52' -N SL52E6 run_stress_test
+qsub -v cutoff='1E-6',L='56' -N SL56E6 run_stress_test
+qsub -v cutoff='1E-6',L='60' -N SL60E6 run_stress_test
+
+qsub -v cutoff='1E-8',L='4' -N SL4E8 run_stress_test
+qsub -v cutoff='1E-8',L='8' -N SL8E8 run_stress_test
+qsub -v cutoff='1E-8',L='12' -N SL12E8 run_stress_test
+qsub -v cutoff='1E-8',L='16' -N SL16E8 run_stress_test
+qsub -v cutoff='1E-8',L='20' -N SL20E8 run_stress_test
+qsub -v cutoff='1E-8',L='24' -N SL24E8 run_stress_test
+qsub -v cutoff='1E-8',L='28' -N SL28E8 run_stress_test
+qsub -v cutoff='1E-8',L='32' -N SL32E8 run_stress_test
+qsub -v cutoff='1E-8',L='36' -N SL36E8 run_stress_test
+qsub -v cutoff='1E-8',L='40' -N SL40E8 run_stress_test
+qsub -v cutoff='1E-8',L='44' -N SL44E8 run_stress_test
+qsub -v cutoff='1E-8',L='48' -N SL48E8 run_stress_test
+qsub -v cutoff='1E-8',L='52' -N SL52E8 run_stress_test
+qsub -v cutoff='1E-8',L='56' -N SL56E8 run_stress_test
+qsub -v cutoff='1E-8',L='60' -N SL60E8 run_stress_test
+
+
+
+
