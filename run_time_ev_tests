@@ -1,34 +1,19 @@
 #!/bin/bash
 
-qsub -v U='0',L='20',cutoff='1e-6' -N NillL20U0E1e-6 run_time_ev_test
-qsub -v U='1',L='20',cutoff='1e-6' -N NillL20U1E1e-6 run_time_ev_test
-qsub -v U='4',L='20',cutoff='1e-6' -N NillL20U4E1e-6 run_time_ev_test
-qsub -v U='8',L='20',cutoff='1e-6' -N NillL20U8E1e-6 run_time_ev_test
+qsub -v U='0',L='20' -N L20U0 run_time_ev_test
+qsub -v U='1',L='20' -N L20U1 run_time_ev_test
+qsub -v U='4',L='20' -N L20U4 run_time_ev_test
+qsub -v U='8',L='20' -N L20U8 run_time_ev_test
 
-qsub -v U='0',L='40',cutoff='1e-6' -N NillL40U0E1e-6 run_time_ev_test
-qsub -v U='1',L='40',cutoff='1e-6' -N NillL40U1E1e-6 run_time_ev_test
-qsub -v U='4',L='40',cutoff='1e-6' -N NillL40U4E1e-6 run_time_ev_test
-qsub -v U='8',L='40',cutoff='1e-6' -N NillL40U8E1e-6 run_time_ev_test
+qsub -v U='0',L='40' -N L40U0 run_time_ev_test
+qsub -v U='1',L='40' -N L40U1 run_time_ev_test
+qsub -v U='4',L='40' -N L40U4 run_time_ev_test
+qsub -v U='8',L='40' -N L40U8 run_time_ev_test
 
-qsub -v U='0',L='80',cutoff='1e-6' -N NillL80U0E1e-6 run_time_ev_test
-qsub -v U='1',L='80',cutoff='1e-6' -N NillL80U1E1e-6 run_time_ev_test
-qsub -v U='4',L='80',cutoff='1e-6' -N NillL80U4E1e-6 run_time_ev_test
-qsub -v U='8',L='80',cutoff='1e-6' -N NillL80U8E1e-6 run_time_ev_test
-
-qsub -v U='0',L='20',cutoff='1e-8' -N NillL20U0E1e-8 run_time_ev_test
-qsub -v U='1',L='20',cutoff='1e-8' -N NillL20U1E1e-8 run_time_ev_test
-qsub -v U='4',L='20',cutoff='1e-8' -N NillL20U4E1e-8 run_time_ev_test
-qsub -v U='8',L='20',cutoff='1e-8' -N NillL20U8E1e-8 run_time_ev_test
-
-qsub -v U='0',L='40',cutoff='1e-8' -N NillL40U0E1e-8 run_time_ev_test
-qsub -v U='1',L='40',cutoff='1e-8' -N NillL40U1E1e-8 run_time_ev_test
-qsub -v U='4',L='40',cutoff='1e-8' -N NillL40U4E1e-8 run_time_ev_test
-qsub -v U='8',L='40',cutoff='1e-8' -N NillL40U8E1e-8 run_time_ev_test
-
-qsub -v U='0',L='80',cutoff='1e-8' -N NillL80U0E1e-8 run_time_ev_test
-qsub -v U='1',L='80',cutoff='1e-8' -N NillL80U1E1e-8 run_time_ev_test
-qsub -v U='4',L='80',cutoff='1e-8' -N NillL80U4E1e-8 run_time_ev_test
-qsub -v U='8',L='80',cutoff='1e-8' -N NillL80U8E1e-8 run_time_ev_test
+qsub -v U='0',L='80' -N L80U0 run_time_ev_test
+qsub -v U='1',L='80' -N L80U1 run_time_ev_test
+qsub -v U='4',L='80' -N L80U4 run_time_ev_test
+qsub -v U='8',L='80' -N L80U8 run_time_ev_test
 
 
 

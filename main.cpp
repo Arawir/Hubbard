@@ -1,10 +1,7 @@
 #include "model.h"
 #include "interface.h"
 #include "tdvp.h"
-#include "itensor/util/parallel.h"
 #include "itensor/all.h"
-
-using namespace itensor;
 
 #include <complex>
 #define im std::complex<double>{0.0,1.0}
@@ -12,8 +9,6 @@ using namespace itensor;
 
 int main(int argc, char *argv[])
 {
-
-    Environment env(argc,argv);
 
     Experiments("DMRG") = [](){
         ExpCon.addPoint("Initialization");
@@ -49,6 +44,7 @@ int main(int argc, char *argv[])
 
         double time = 0.0;
         while(time <= getD("time")+0.001){
+            std::cout << "  StepE ";
             std::cout << time << " ";
             std::cout << calculateMz(sites,psi) << " ";
             std::cout << calculateDoublon(sites,psi) << " ";
