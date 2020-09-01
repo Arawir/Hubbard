@@ -212,12 +212,17 @@ public:
 
     void run()
     {
-        std::string name = getS("exp");
+        experiment(getS("exp"))->experiment();
+    }
+
+    Experiment* experiment(std::string name)
+    {
         for(auto& exp : experiments){
-            if(exp.name == name){ exp.experiment(); }
+            if(exp.name == name){ return &exp; }
         }
         std::cerr << "ERROR: unknown experiment name!" << std::endl;
         assert(false);
+        return nullptr;
     }
 
 } Experiments;
