@@ -33,14 +33,14 @@ class cElectronSite
             {
             if(conserveNf && conserveSz)
                 {
-                s = Index(QN({"Sz", 0},{"Nf",0,-1}),1,
-                          QN({"Sz",+1},{"Nf",1,-1}),1,
-                          QN({"Sz",-1},{"Nf",1,-1}),1,
-                          QN({"Sz", 0},{"Nf",2,-1}),1,
-                          QN({"Sz", 0},{"Nf",0,-1}),1,
-                          QN({"Sz",+1},{"Nf",1,-1}),1,
-                          QN({"Sz",-1},{"Nf",1,-1}),1,
-                          QN({"Sz", 0},{"Nf",2,-1}),1,Out,ts);
+                s = Index(QN({"Sz", 1},{"Nf",0,-1}),1,
+                          QN({"Sz", 2},{"Nf",1,-1}),1,
+                          QN({"Sz", 0},{"Nf",1,-1}),1,
+                          QN({"Sz", 1},{"Nf",2,-1}),1,
+                          QN({"Sz",-1},{"Nf",0,-1}),1,
+                          QN({"Sz", 0},{"Nf",1,-1}),1,
+                          QN({"Sz",-2},{"Nf",1,-1}),1,
+                          QN({"Sz",-1},{"Nf",2,-1}),1,Out,ts);
                 }
             else if(conserveNf) // don't conserve Sz
                 {
@@ -55,14 +55,14 @@ class cElectronSite
                 }
             else if(conserveSz) //don't conserve Nf, only fermion parity
                 {
-                s = Index(QN({"Sz", 0},{"Pf",0,-2}),1,
-                          QN({"Sz",+1},{"Pf",1,-2}),1,
-                          QN({"Sz",-1},{"Pf",1,-2}),1,
-                          QN({"Sz", 0},{"Pf",0,-2}),1,
-                          QN({"Sz", 0},{"Pf",0,-2}),1,
-                          QN({"Sz",+1},{"Pf",1,-2}),1,
-                          QN({"Sz",-1},{"Pf",1,-2}),1,
-                          QN({"Sz", 0},{"Pf",0,-2}),1,Out,ts);
+                s = Index(QN({"Sz", 1},{"Pf",0,-2}),1,
+                          QN({"Sz", 2},{"Pf",1,-2}),1,
+                          QN({"Sz", 0},{"Pf",1,-2}),1,
+                          QN({"Sz", 1},{"Pf",0,-2}),1,
+                          QN({"Sz",-1},{"Pf",0,-2}),1,
+                          QN({"Sz", 0},{"Pf",1,-2}),1,
+                          QN({"Sz",-2},{"Pf",1,-2}),1,
+                          QN({"Sz",-1},{"Pf",0,-2}),1,Out,ts);
                 }
             else
                 {
@@ -87,51 +87,19 @@ class cElectronSite
 
     IndexVal
     state(std::string const& state)
-        {
-        if(state == "0U" || state == "EmpU")
-            {
-            return s(1);
-            }
-        else
-        if(state == "+U" || state == "UpU")
-            {
-            return s(2);
-            }
-        else
-        if(state == "-U" || state == "DnU")
-            {
-            return s(3);
-            }
-        else
-        if(state == "SU" || state == "UpDnU")
-            {
-            return s(4);
-            }
-        if(state == "0D" || state == "EmpD")
-        {
-            return s(5);
-        }
-        else
-        if(state == "+D" || state == "UpD")
-        {
-            return s(6);
-        }
-        else
-        if(state == "-D" || state == "DnD")
-        {
-            return s(7);
-        }
-        else
-        if(state == "SD" || state == "UpDnD")
-        {
-            return s(8);
-        }
-        else
-            {
-            Error("State " + state + " not recognized");
-            }
+    {
+        if(state == "0U" || state == "EmpU"){ return s(1); }
+        else if(state == "+U" || state == "UpU"){ return s(2);}
+        else if(state == "-U" || state == "DnU"){ return s(3);}
+        else if(state == "SU" || state == "UpDnU"){ return s(4); }
+        else if(state == "0D" || state == "EmpD"){ return s(5);}
+        else if(state == "+D" || state == "UpD"){ return s(6);}
+        else if(state == "-D" || state == "DnD"){ return s(7);}
+        else if(state == "SD" || state == "UpDnD"){ return s(8);}
+        else{ Error("State " + state + " not recognized"); }
+
         return IndexVal{};
-        }
+    }
 
         ITensor
         op(std::string const& opname,
