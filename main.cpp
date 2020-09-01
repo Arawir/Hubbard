@@ -14,13 +14,14 @@ int main(int argc, char *argv[])
         ExpCon.addPoint("Initialization");
 
         seedRNG(1);
-        auto sites = Electron( getI("L") );
+        auto sites = cElectron( getI("L") );
         auto psi = prepareInitState(sites);
         auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
         auto sweeps = prepareSweepClass();
 
         std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
         std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
+        std::cout << "  N: " << calculateN(sites,psi) << std::endl;
 
         ExpCon.addPoint("Starting DMRG");
         dmrg(psi,H,sweeps);
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
         ExpCon.addPoint("Output data");
         std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
         std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
+        std::cout << "  N: " << calculateN(sites,psi) << std::endl;
     };
 
 
@@ -35,7 +37,7 @@ int main(int argc, char *argv[])
         ExpCon.addPoint("Initialization");
 
         seedRNG(1);
-        auto sites = Electron( getI("L") );
+        auto sites = cElectron( getI("L") );
         auto psi = prepareInitState(sites);
         auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
         auto sweeps = prepareSweepClass();
@@ -52,6 +54,33 @@ int main(int argc, char *argv[])
             tdvp(psi,H,im*getD("dTime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
 
             time += getD("dTime");
+        }
+
+        ExpCon.addPoint("Finish");
+    };
+
+    Experiments("timeEvBasic") = [](){
+        ExpCon.addPoint("Initialization");
+
+        int L = getI("L");
+        auto sites = cElectron(L);
+        auto psi = prepareInitState(sites);
+        auto Hampo = hubbardHamiltonianAmpo(sites,getI("L"),getD("t"),getD("U"));
+        auto H = toMPO(Hampo);
+        auto Mz = generateMz(sites, L);
+
+        auto expH = toExpH(Hampo,im*getD("dTime"));
+
+        auto args = Args("Method=","DensityMatrix","Cutoff=",1E-9,"MaxDim=",3000);
+
+        for(double time=0.0; time<=getD("time")+0.001; time+=getD("dTime")){
+            std::cout << "  StepE ";
+            std::cout << time << " ";
+            std::cout << std::real(innerC(psi,H,psi)) << " ";
+            std::cout << std::real(innerC(psi,Mz,psi)) << " ";
+            psi = applyMPO(expH,psi,args);
+            psi.noPrime().normalize();
+            std::cout << std::endl;
         }
 
         ExpCon.addPoint("Finish");
@@ -74,11 +103,12 @@ int main(int argc, char *argv[])
     Params.add("minDim","int","1");
     Params.add("maxDim","int","100");
     Params.add("niter","int","10");
-    Params.add("state","string","Up-Dn");
+    Params.add("state","string","UpU-DnU");
     Params.add("ConserveNf","bool","0");
     Params.add("ConserveSz","bool","0");
     Params.add("exp","string","1");
     Params.add("ConserveQNs","bool","0");
+    Params.add("Method","DensityMatrix","0");
 
     Params.set(argc,argv);
     Experiments.run();
