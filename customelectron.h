@@ -302,7 +302,7 @@ class cElectronSite
             Op.set(UDD,UDPD,-1);
             }
         else
-        if(opname == "Sz")
+        if(opname == "Sz0")
             {
             Op.set(UpU,UpPU,+0.5);
             Op.set(DnU,DnPU,-0.5);
@@ -311,21 +311,61 @@ class cElectronSite
             Op.set(DnD,DnPD,-0.5);
             }
         else
-        if(opname == "S+")
+        if(opname == "Sz1")
+        {
+            Op.set(EmU,EmPU,+0.5);
+            Op.set(UpU,UpPU,+0.5);
+            Op.set(DnU,DnPU,+0.5);
+            Op.set(UDU,UDPU,+0.5);
+
+            Op.set(EmD,EmPD,-0.5);
+            Op.set(UpD,UpPD,-0.5);
+            Op.set(DnD,DnPD,-0.5);
+            Op.set(UDD,UDPD,-0.5);
+        }
+        else
+        if(opname == "S01")
+        {
+            Op.set(UpU,UpPU,+0.25);
+            Op.set(DnU,DnPU,-0.25);
+            Op.set(UpD,UpPD,-0.25);
+            Op.set(DnD,DnPD,+0.25);
+
+            Op.set(UpD,DnPU,0.5);
+            Op.set(DnU,UpPD,0.5);
+        }
+        else
+        if(opname == "S+1")
+        {
+            Op.set(EmD,EmPU,1);
+            Op.set(UpD,UpPU,1);
+            Op.set(DnD,DnPU,1);
+            Op.set(UDD,UDPU,1);
+        }
+        else
+        if(opname == "S-1")
+        {
+            Op.set(EmU,EmPD,1);
+            Op.set(UpU,UpPD,1);
+            Op.set(DnU,DnPD,1);
+            Op.set(UDU,UDPD,1);
+        }
+        else
+        if(opname == "S+0")
             {
             Op.set(DnU,UpPU,1);
 
             Op.set(DnD,UpPD,1);
             }
         else
-        if(opname == "S-")
+        if(opname == "S-0")
             {
             Op.set(UpU,DnPU,1);
 
             Op.set(UpD,DnPD,1);
             }
         else
-        if(opname == "S2")
+        if(opname == "S20")
             {
             //S dot S on-site
             Op.set(UpU,UpPU,0.75);

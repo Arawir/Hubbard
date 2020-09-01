@@ -16,20 +16,20 @@ int main(int argc, char *argv[])
         seedRNG(1);
         auto sites = cElectron( getI("L") );
         auto psi = prepareInitState(sites);
-        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"),getD("K"),getD("Jh"));
         auto sweeps = prepareSweepClass();
 
         std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
-        std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
-        std::cout << "  N: " << calculateN(sites,psi) << std::endl;
+        //std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
+        //std::cout << "  N: " << calculateN(sites,psi) << std::endl;
 
         ExpCon.addPoint("Starting DMRG");
         dmrg(psi,H,sweeps);
 
         ExpCon.addPoint("Output data");
         std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
-        std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
-        std::cout << "  N: " << calculateN(sites,psi) << std::endl;
+       // std::cout << "  Mz: " << calculateMz(sites,psi) << std::endl;
+       // std::cout << "  N: " << calculateN(sites,psi) << std::endl;
     };
 
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         seedRNG(1);
         auto sites = cElectron( getI("L") );
         auto psi = prepareInitState(sites);
-        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"),getD("K"),getD("Jh"));
         auto sweeps = prepareSweepClass();
 
         ExpCon.addPoint("Time evolution of initial state");
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         int L = getI("L");
         auto sites = cElectron(L);
         auto psi = prepareInitState(sites);
-        auto Hampo = hubbardHamiltonianAmpo(sites,getI("L"),getD("t"),getD("U"));
+        auto Hampo = hubbardHamiltonianAmpo(sites,getI("L"),getD("t"),getD("U"),getD("K"),getD("Jh"));
         auto H = toMPO(Hampo);
         auto Mz = generateMz(sites, L);
 
@@ -90,6 +90,8 @@ int main(int argc, char *argv[])
 
     Params.add("t","double","0.0");
     Params.add("U","double","0.0");
+    Params.add("K","double","0.0");
+    Params.add("Jh","double","0.0");
 
     Params.add("L","int","4");
     Params.add("PBC","bool","0");

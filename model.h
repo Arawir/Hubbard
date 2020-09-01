@@ -18,38 +18,43 @@ Sweeps prepareSweepClass()
 }
 
 AutoMPO hubbardHamiltonianAmpo(cElectron &sites,
-                       int L, double t, double U)
+                       int L, double t, double U, double K, double Jh)
 {
     auto ampo = AutoMPO(sites);
     for(int j=1; j<L; j++){
-        ampo += -t,"Cdagup",j,"Cup",j+1;
-       // ampo += +t,"Cup",j,"Cdagup",j+1;
-        ampo += -t,"Cdagup",j+1,"Cup",j;
-        ampo += -t,"Cdagdn",j,"Cdn",j+1;
-        //ampo += +t,"Cdn",j,"Cdagdn",j+1;
-        ampo += -t,"Cdagdn",j+1,"Cdn",j;
+        ampo += +t,"Cdagup",j,"Cup",j+1;
+        ampo += +t,"Cdagup",j+1,"Cup",j;
+        ampo += +t,"Cdagdn",j,"Cdn",j+1;
+        ampo += +t,"Cdagdn",j+1,"Cdn",j;
+
+        ampo += K/2,"S+1",j,"S-1",j+1;
+        ampo += K/2,"S-1",j,"S+1",j+1;
+        ampo += K,"Sz1",j,"Sz1",j+1;
     }
 
     if(Args::global().getBool("PBC")){
-        ampo += -t,"Cdagup",L,"Cup",1;
-     //   ampo += +t,"Cup",L,"Cdagup",1;
-        ampo += -t,"Cdagup",1,"Cup",L;
-        ampo += -t,"Cdagdn",L,"Cdn",1;
-       // ampo += +t,"Cdn",L,"Cdagdn",1;
-        ampo += -t,"Cdagdn",1,"Cdn",L;
+        ampo += +t,"Cdagup",L,"Cup",1;
+        ampo += +t,"Cdagup",1,"Cup",L;
+        ampo += +t,"Cdagdn",L,"Cdn",1;
+        ampo += +t,"Cdagdn",1,"Cdn",L;
+
+        ampo += K/2,"S+1",L,"S-1",1;
+        ampo += K/2,"S-1",L,"S+1",1;
+        ampo += K,"Sz1",L,"Sz1",1;
     }
 
     for(int j=1; j<=L; j++){
         ampo += +U,"Nupdn",j;
+        ampo += +Jh,"S01",j;
     }
 
     return ampo;
 }
 
 MPO hubbardHamiltonian(cElectron &sites,
-                       int L, double t, double U)
+                       int L, double t, double U, double K, double Jh)
 {
-    return toMPO(hubbardHamiltonianAmpo(sites,L,t,U));
+    return toMPO(hubbardHamiltonianAmpo(sites,L,t,U,K, Jh));
 }
 
 MPO generateMz(cElectron &sites, int L)
