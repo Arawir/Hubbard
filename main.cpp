@@ -61,30 +61,23 @@ int main(int argc, char *argv[])
     Experiments("timeEv3") = [](){
 
 
-            auto sites = SpinHalf(getI("L")*2);
+            auto sites = SpinHalf(getI("L"));
             auto ampo = AutoMPO(sites);
 
-            for(int i = 1; i <= getI("L")*2-2; ++ i){
-               ampo += 0.5,"S+",i,"S-",i+2;
-               ampo += 0.5,"S-",i,"S+",i+2;
-               ampo +=     "Sz",i,"Sz",i+2;
+            for(int i = 1; i <= getI("L")-1; ++i){
+               ampo += 0.5,"S+",i,"S-",i+1;
+               ampo += 0.5,"S-",i,"S+",i+1;
+               ampo +=     "Sz",i,"Sz",i+1;
             }
             auto H = toMPO(ampo);
             printfln("Maximum bond dimension of H is %d",maxLinkDim(H));
 
 
             auto state = InitState(sites);
-            state.set(1,"Up");
-            for(int i = 2; i < getI("L")*2; i=i+2){
-               if((i/2)%2==1){
-                   state.set(i,"Dn");
-                   state.set(i+1,"Dn");
-                } else {
-                   state.set(i,"Up");
-                   state.set(i+1,"Up");
-                }
+            for(int i = 1; i < getI("L"); i+=2){
+               state.set(i,"Up");
+               state.set(i+1,"Dn");
             }
-            state.set(getI("L")*2,"Up");
 
             auto psi1 = MPS(state);
 
@@ -101,8 +94,8 @@ int main(int argc, char *argv[])
 
             for(double time=0.0; time<=getD("maxtime")+0.001; time+=getD("dtime")){
                 if(time<2*getD("dtime")){
-                   std::vector<Real> epsilonK = {1E-12, 1E-12};
-                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",3,"DoNormalize",true,"Quiet",true});
+                   std::vector<Real> epsilonK = {1E-12, 1E-12,1E-12};
+                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",2,"DoNormalize",true,"Quiet",true});
                 }
                 std::cout << "  Time: " << time
                           << "  Energy: "
