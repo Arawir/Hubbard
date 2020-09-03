@@ -59,50 +59,23 @@ int main(int argc, char *argv[])
     };
 
     Experiments("timeEv3") = [](){
-
-
-            auto sites = SpinHalf(getI("L")*2);
-            auto ampo = AutoMPO(sites);
-
-            for(int i = 1; i <= getI("L")*2-2; ++ i){
-               ampo += 0.5,"S+",i,"S-",i+2;
-               ampo += 0.5,"S-",i,"S+",i+2;
-               ampo +=     "Sz",i,"Sz",i+2;
-            }
-            auto H = toMPO(ampo);
-            printfln("Maximum bond dimension of H is %d",maxLinkDim(H));
-
-
-            auto state = InitState(sites);
-            state.set(1,"Up");
-            for(int i = 2; i < getI("L")*2; i=i+2){
-               if((i/2)%2==1){
-                   state.set(i,"Dn");
-                   state.set(i+1,"Dn");
-                } else {
-                   state.set(i,"Up");
-                   state.set(i+1,"Up");
-                }
-            }
-            state.set(getI("L")*2,"Up");
-
-            auto psi1 = MPS(state);
-
-
-
+            auto sites = Electron( getI("L") );
+            auto psi1 = prepareInitState(sites);
+            auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
             auto sweeps = prepareSweepClass();
+            printfln("Maximum bond dimension of H is %d",maxLinkDim(H));
 
 
             // start TDVP, either one site or two site algorithm can be used by adjusting the "NumCenter" argument
             println("----------------------------------------GSE-TDVP---------------------------------------");
 
-            std::cout << "  Energy: " << innerC(psi1,H,psi1).real() << std::endl;
+            std::cout << "  Energy: " << real(innerC(psi1,H,psi1)) << std::endl;
 
 
             for(double time=0.0; time<=getD("maxtime")+0.001; time+=getD("dtime")){
-                if(time<2*getD("dtime")){
-                   std::vector<Real> epsilonK = {1E-12, 1E-12};
-                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",3,"DoNormalize",true,"Quiet",true});
+                if(time<5*getD("dtime")){
+                   std::vector<Real> epsilonK = {1E-12, 1E-12, 1E-12};
+                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",true});
                 }
                 std::cout << "  Time: " << time
                           << "  Energy: "
