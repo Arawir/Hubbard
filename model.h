@@ -63,6 +63,16 @@ double calculateDoublon(const Electron &sites, const MPS &psi)
 
     return innerC(psi,toMPO(D),psi).real();
 }
+double calculateN(const Electron &sites, const MPS &psi)
+{
+    auto D = AutoMPO(sites);
+
+    for(int i=1; i<=psi.length(); i++){
+        D += 1.0,"Ntot",i;
+    }
+
+    return innerC(psi,toMPO(D),psi).real();
+}
 
 
 #endif // MODEL

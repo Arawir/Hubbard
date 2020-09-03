@@ -61,14 +61,31 @@ int main(int argc, char *argv[])
     Experiments("timeEv3") = [](){
             auto sites = Electron(getI("L"));
             auto ampo = AutoMPO(sites);
+            double t=getD("t");
+            double U=getD("U");
+            double J=getD("J");
+            double L = getI("L");
+
+            for(int j=1; j<L; j++){
+                ampo += -t,"Cdagup",j,"Cup",j+1;
+                ampo += -t,"Cdagup",j+1,"Cup",j;
+                ampo += -t,"Cdagdn",j,"Cdn",j+1;
+                ampo += -t,"Cdagdn",j+1,"Cdn",j;
+            }
+
+            for(int j=1; j<=L; j++){
+                ampo += +U,"Nupdn",j;
+            }
 
             for(int i = 1; i <= getI("L")-1; ++i){
-               ampo += 0.5,"S+",i,"S-",i+1;
-               ampo += 0.5,"S-",i,"S+",i+1;
-               ampo +=     "Sz",i,"Sz",i+1;
+               ampo += J/2,"S+",i,"S-",i+1;
+               ampo += J/2,"S-",i,"S+",i+1;
+               ampo +=     J,"Sz",i,"Sz",i+1;
+
             }
             auto H = toMPO(ampo);
-            printfln("Maximu bond dimension of H is %d",maxLinkDim(H));
+            auto H2 = H;
+            printfln("ddddMaximu bond dimension of H is %d",maxLinkDim(H));
 
 
             auto psi1 = prepareInitState(sites);
@@ -80,25 +97,31 @@ int main(int argc, char *argv[])
 
             std::cout << "  Energy: " << innerC(psi1,H,psi1).real() << std::endl;
 
+            std::cout << " N  " << calculateN(sites,psi1) << " "
+                    << " D  " << calculateDoublon(sites,psi1) << " "
+                      << " Mz  " << calculateMz(sites,psi1) << std::endl;
 
             for(double time=0.0; time<=getD("maxtime")+0.001; time+=getD("dtime")){
                 if(time<2*getD("dtime")){
-                   std::vector<Real> epsilonK = {1E-12, 1E-12};
-                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",3,"DoNormalize",true,"Quiet",true});
+                   std::vector<Real> epsilonK = {1E-8, 1E-8,1E-8};
+                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-8,"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",false});
                 }
                 std::cout << "  Time: " << time
                           << "  Energy: "
                           << tdvp(psi1,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",1})
-                          << " ";
-                std::cout << calculateMz(sites,psi1) << std::endl;
+                          << " N " << calculateN(sites,psi1) << " "
+                          << " D " << calculateDoublon(sites,psi1) << " "
+                          << " Mz  " << calculateMz(sites,psi1) << std::endl;
             }
             printfln("Using overlap = %.10f", real(innerC(psi1,H,psi1)) );
+            printfln("Using overlap = %.10f", real(innerC(psi1,H2,psi1)) );
         };
 
 
 
     Params.add("t","double","0.0");
     Params.add("U","double","0.0");
+    Params.add("J","double","0.0");
 
     Params.add("L","int","4");
     Params.add("PBC","bool","0");
