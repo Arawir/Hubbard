@@ -59,9 +59,7 @@ int main(int argc, char *argv[])
     };
 
     Experiments("timeEv3") = [](){
-
-
-            auto sites = SpinHalf(getI("L"));
+            auto sites = Electron(getI("L"));
             auto ampo = AutoMPO(sites);
 
             for(int i = 1; i <= getI("L")-1; ++i){
@@ -70,19 +68,10 @@ int main(int argc, char *argv[])
                ampo +=     "Sz",i,"Sz",i+1;
             }
             auto H = toMPO(ampo);
-            printfln("Maximum bond dimension of H is %d",maxLinkDim(H));
+            printfln("Maximu bond dimension of H is %d",maxLinkDim(H));
 
 
-            auto state = InitState(sites);
-            for(int i = 1; i < getI("L"); i+=2){
-               state.set(i,"Up");
-               state.set(i+1,"Dn");
-            }
-
-            auto psi1 = MPS(state);
-
-
-
+            auto psi1 = prepareInitState(sites);
             auto sweeps = prepareSweepClass();
 
 
@@ -94,13 +83,14 @@ int main(int argc, char *argv[])
 
             for(double time=0.0; time<=getD("maxtime")+0.001; time+=getD("dtime")){
                 if(time<2*getD("dtime")){
-                   std::vector<Real> epsilonK = {1E-12, 1E-12,1E-12};
-                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",2,"DoNormalize",true,"Quiet",true});
+                   std::vector<Real> epsilonK = {1E-12, 1E-12};
+                   addBasis(psi1,H,epsilonK,{"Cutoff",1E-12,"Method","DensityMatrix","KrylovOrd",3,"DoNormalize",true,"Quiet",true});
                 }
                 std::cout << "  Time: " << time
                           << "  Energy: "
                           << tdvp(psi1,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",1})
-                          << std::endl;
+                          << " ";
+                std::cout << calculateMz(sites,psi1) << std::endl;
             }
             printfln("Using overlap = %.10f", real(innerC(psi1,H,psi1)) );
         };

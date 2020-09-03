@@ -159,7 +159,7 @@ std::vector<std::string> parseInitState(std::string str)
     return state;
 }
 
-itensor::MPS prepareInitState(Electron &sites)
+itensor::MPS prepareInitState(auto &sites)
 {
     std::vector<std::string> initState = parseInitState(Args::global().getString("state"));
     int L = Params.getInt("L");
