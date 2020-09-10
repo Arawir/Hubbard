@@ -4,6 +4,7 @@
 #include "itensor/all.h"
 #include <ctime>
 #include <functional>
+#include <cstdarg>
 
 double getD(std::string data)
 {
@@ -201,8 +202,9 @@ public:
     }
     ~ExperimentsClass() = default;
 
-    Experiment& operator () (std::string name)
+    Experiment& operator () (std::string name, ...)
     {
+        //std::va_list arguments;
         for(auto& exp : experiments){
             if(exp.name == name){ return exp; }
         }

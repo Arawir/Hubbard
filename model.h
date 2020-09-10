@@ -42,33 +42,45 @@ MPO hubbardHamiltonian(Electron &sites,
 }
 
 
-double calculateMz(const Electron &sites, const MPS &psi)
+double calculateMzPerL(const Electron &sites, const MPS &psi)
 {
     auto Mz = AutoMPO(sites);
 
     for(int i=1; i<=psi.length(); i++){
-        Mz += 0.5*pow(-1,i+1),"Sz",i;
+        Mz += 0.5/psi.length()*pow(-1,i+1),"Sz",i;
     }
 
     return innerC(psi,toMPO(Mz),psi).real();
 }
 
-double calculateDoublon(const Electron &sites, const MPS &psi)
+double calculateMsPerL(const Electron &sites, const MPS &psi)
+{
+    auto Ms = AutoMPO(sites);
+
+    for(int i=1; i<=psi.length(); i++){
+        Ms += +1.0/2.0/psi.length()*pow(-1,i),"Nup",i;
+        Ms += -1.0/2.0/psi.length()*pow(-1,i),"Ndn",i;
+    }
+
+    return innerC(psi,toMPO(Ms),psi).real();
+}
+
+double calculateDPerL(const Electron &sites, const MPS &psi)
 {
     auto D = AutoMPO(sites);
 
     for(int i=1; i<=psi.length(); i++){
-        D += 1.0,"Nupdn",i;
+        D += 1.0/psi.length(),"Nupdn",i;
     }
 
     return innerC(psi,toMPO(D),psi).real();
 }
-double calculateN(const Electron &sites, const MPS &psi)
+double calculateNPerL(const Electron &sites, const MPS &psi)
 {
     auto D = AutoMPO(sites);
 
     for(int i=1; i<=psi.length(); i++){
-        D += 1.0,"Ntot",i;
+        D += 1.0/psi.length(),"Ntot",i;
     }
 
     return innerC(psi,toMPO(D),psi).real();
