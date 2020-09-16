@@ -41,6 +41,34 @@ MPO hubbardHamiltonian(Electron &sites,
 
     return toMPO(ampo);
 }
+MPO hubbardHamiltonianWithDist(Electron &sites,
+                       int L, double t, double U)
+{
+    auto ampo = AutoMPO(sites);
+    for(int j=1; j<L; j++){
+        ampo += -t,"Cdagup",j,"Cup",j+1;
+        ampo += +t,"Cup",j,"Cdagup",j+1;
+        ampo += -t,"Cdagdn",j,"Cdn",j+1;
+        ampo += +t,"Cdn",j,"Cdagdn",j+1;
+    }
+
+    if(Args::global().getBool("PBC")){
+        ampo += -t,"Cdagup",L,"Cup",1;
+        ampo += +t,"Cup",L,"Cdagup",1;
+        ampo += -t,"Cdagdn",L,"Cdn",1;
+        ampo += +t,"Cdn",L,"Cdagdn",1;
+    }
+
+    for(int j=1; j<=L; j++){
+        ampo += +U,"Nupdn",j;
+    }
+
+    for(int j=11; j<=L; j++){
+        ampo += t*1E6,"Ntot",j;
+    }
+
+    return toMPO(ampo);
+}
 
 void prepareObservables()
 {

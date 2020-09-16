@@ -23,35 +23,35 @@ int main(int argc, char *argv[])
         ExpCon.calc(psi, oMode::b, "E","Mz/L","N");
     };
 
-//    Experiments("timeEv") = [](){
-//        ExpCon.addPoint("Initialization");
+    Experiments("timeEv") = [](){
+        ExpCon.addPoint("Initialization");
 
-//        auto sites = Electron(getI("L"));
-//        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
-//        auto psi = prepareInitState(sites);
-//        auto sweeps = prepareSweepClass();
+        auto sites = Electron(getI("L"));
+        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+        auto Hdist = hubbardHamiltonianWithDist(sites,getI("L"),getD("t"),getD("U"));
+        auto psi = prepareInitState(sites);
+        auto sweeps = prepareSweepClass();
 
-//        ExpCon.addPoint("Starting TDVP");
+        ExpCon.setSites(sites); ExpCon("E") = H;
 
-//        double energy = innerC(psi,H,psi).real();
+        ExpCon.addPoint("Starting DMRG");
+        dmrg(psi,Hdist,sweeps);
 
-//        for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
-//            std::cout << "  t: " << time << " ";
-//            std::cout << energy << " ";
-//            std::cout << innerC(psi,H,psi).real() << " ";
-//            std::cout << calculateNPerL(sites,psi) << " ";
-//            std::cout << calculateDPerL(sites,psi) << " ";
-//            std::cout << calculateMsPerL(sites,psi) << " ";
-//            std::cout << std::endl;
+        ExpCon.addPoint("Starting TDVP");
 
-//            if(time<2*getD("dtime")){
-//               std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
-//               addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",getB("Silent")});
-//            }
-//            energy = tdvp(psi,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",1});
-//        }
-//        ExpCon.addPoint("Finish");
-//    };
+        double energy = innerC(psi,H,psi).real();
+
+        for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
+            ExpCon.calc(psi,oMode::b,"t:",time,"E","N","D3","maxDim:",maxLinkDim(psi),"Ni:",oMode::a,"N1:L");
+
+            if(time<2*getD("dtime")){
+               std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
+               addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",getB("Silent")});
+            }
+            energy = tdvp(psi,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
+        }
+        ExpCon.addPoint("Finish");
+    };
 
 
 
