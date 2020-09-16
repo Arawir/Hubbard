@@ -9,55 +9,49 @@
 
 int main(int argc, char *argv[])
 {
+    Experiments("dmrg") = [](){
 
-    Experiments("DMRG") = [](){
         ExpCon.addPoint("Initialization");
-
-        seedRNG(1);
-        auto sites = Electron( getI("L") );
-        auto psi = prepareInitState(sites);
-        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
-        auto sweeps = prepareSweepClass();
-
-        std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
-        std::cout << "  Mz: " << calculateMzPerL(sites,psi) << std::endl;
+        auto [sites, psi, H, sweeps] = prepareExpBasic();
+        ExpCon.setSites(sites); ExpCon("E") = H;
+        ExpCon.calc(psi, oMode::b, "E","Mz/L","N");
 
         ExpCon.addPoint("Starting DMRG");
         dmrg(psi,H,sweeps);
 
         ExpCon.addPoint("Output data");
-        std::cout << "  Energy: " << std::real(innerC(psi,H,psi)) << std::endl;
-        std::cout << "  Mz: " << calculateMzPerL(sites,psi) << std::endl;
+        ExpCon.calc(psi, oMode::b, "E","Mz/L","N");
     };
-    Experiments("timeEv") = [](){
-        ExpCon.addPoint("Initialization");
 
-        auto sites = Electron(getI("L"));
-        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
-        auto psi = prepareInitState(sites);
-        auto sweeps = prepareSweepClass();
+//    Experiments("timeEv") = [](){
+//        ExpCon.addPoint("Initialization");
 
-        ExpCon.addPoint("Starting TDVP");
+//        auto sites = Electron(getI("L"));
+//        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+//        auto psi = prepareInitState(sites);
+//        auto sweeps = prepareSweepClass();
 
-        double energy = innerC(psi,H,psi).real();
+//        ExpCon.addPoint("Starting TDVP");
 
-        for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
-            std::cout << "  t: " << time << " ";
-            std::cout << energy << " ";
-            std::cout << innerC(psi,H,psi).real() << " ";
-            std::cout << calculateNPerL(sites,psi) << " ";
-            std::cout << calculateDPerL(sites,psi) << " ";
-            std::cout << calculateMsPerL(sites,psi) << " ";
-            std::cout << std::endl;
+//        double energy = innerC(psi,H,psi).real();
 
-            if(time<2*getD("dtime")){
-               std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
-               addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",getB("Silent")});
-            }
-            energy = tdvp(psi,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",1});
-        }
-        ExpCon.addPoint("Finish");
-    };
+//        for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
+//            std::cout << "  t: " << time << " ";
+//            std::cout << energy << " ";
+//            std::cout << innerC(psi,H,psi).real() << " ";
+//            std::cout << calculateNPerL(sites,psi) << " ";
+//            std::cout << calculateDPerL(sites,psi) << " ";
+//            std::cout << calculateMsPerL(sites,psi) << " ";
+//            std::cout << std::endl;
+
+//            if(time<2*getD("dtime")){
+//               std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
+//               addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",getB("Silent")});
+//            }
+//            energy = tdvp(psi,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",1});
+//        }
+//        ExpCon.addPoint("Finish");
+//    };
 
 
 
@@ -83,6 +77,7 @@ int main(int argc, char *argv[])
     Params.add("ConserveQNs","bool","0");
 
     Params.set(argc,argv);
+    prepareObservables();
     Experiments.run();
 
     return 0;

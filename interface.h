@@ -4,14 +4,14 @@
 #include "itensor/all.h"
 #include <ctime>
 #include <functional>
-#include <cstdarg>
+
+typedef std::complex<double> cpx;
+#define im std::complex<double>{0.0,1.0}
+
+
+using namespace itensor;
 
 double getD(std::string data)
-{
-    return Args::global().getReal(data);
-}
-
-double getR(std::string data)
 {
     return Args::global().getReal(data);
 }
@@ -162,6 +162,14 @@ std::vector<std::string> parseInitState(std::string str)
 
 itensor::MPS prepareInitState(auto &sites)
 {
+    if( (Args::global().getString("state")=="random")||(Args::global().getString("state")=="r")){
+        auto state = itensor::InitState(sites);
+        auto s2 = itensor::randomMPS(state);
+        s2.orthogonalize();
+        s2.normalize();
+        return s2;
+    }
+
     std::vector<std::string> initState = parseInitState(Args::global().getString("state"));
     int L = Params.getInt("L");
 
@@ -202,9 +210,8 @@ public:
     }
     ~ExperimentsClass() = default;
 
-    Experiment& operator () (std::string name, ...)
+    Experiment& operator () (std::string name)
     {
-        //std::va_list arguments;
         for(auto& exp : experiments){
             if(exp.name == name){ return exp; }
         }
@@ -229,14 +236,162 @@ public:
 
 } Experiments;
 
-class Controller
+
+///////////////////////////////////////////
+
+struct Observable
+{
+    std::string name;
+    std::vector<MPO> matrix;
+    bool wasGenerated=false;
+    bool useMultMpos = false;
+    std::function<MPO(const Electron &sites)> generateMPO;
+    std::function<std::vector<MPO>(const Electron &sites)> generateMPOs;
+    Electron *sites = nullptr;
+
+    void operator = (std::function<MPO(const Electron &sites)> generate)
+    {
+        generateMPO = generate;
+    }
+
+    void operator = (std::function<std::vector<MPO>(const Electron &sites)> generate)
+    {
+        useMultMpos=true;
+        generateMPOs = generate;
+    }
+
+    void operator =  (MPO &nMatrix)
+    {
+        matrix.push_back( nMatrix );
+        wasGenerated=true;
+    }
+
+    void generateIfNeeded()
+    {
+        if(wasGenerated==false){
+            wasGenerated=true;
+            if(!useMultMpos){
+                matrix.push_back( generateMPO(*sites) );
+            } else {
+                matrix = generateMPOs(*sites);
+            }
+        }
+    }
+
+    std::vector<cpx> expectedValue(MPS psi)
+    {
+        std::vector<cpx> out;
+        for(auto &m : matrix){
+            out.push_back( innerC(psi,m,psi) );
+        }
+        return out;
+    }
+};
+
+enum class oMode{
+    a, b, c
+};
+
+class ObservableContainer
+{
+public:
+    std::vector<Observable> observables;
+    oMode mode = oMode::a;
+
+public:
+    ObservableContainer() = default;
+    ~ObservableContainer() = default;
+
+    Observable& operator () (std::string name)
+    {
+        for(auto& obs : observables){
+            if(obs.name == name){ return obs; }
+        }
+        observables.push_back( Observable{name} );
+        return observables.back();
+    }
+
+    template<typename T,typename... Args>
+    void calc(MPS &psi, T val, Args... args)
+    {
+        std::cout << " ";
+        writeObservableValue(val,psi);
+        if(mode==oMode::c){ std::cout << std::endl; }
+        calc(psi, args...) ;
+    }
+
+    template<typename... Args>
+    void calc(MPS &psi, oMode val, Args... args)
+    {
+        mode = val;
+        calc(psi, args...) ;
+    }
+
+    void calc(MPS &psi)
+    {
+        std::cout << std::endl;
+    }
+
+    void setSites(Electron &sites)
+    {
+        for(auto& obs : observables){
+            obs.sites = &sites;
+        }
+    }
+
+
+private:
+    Observable* observable(std::string name)
+    {
+        for(auto& obs : observables){
+            if(obs.name == name){ return &obs; }
+        }
+        std::cerr << "ERROR: unknown observable name!" << std::endl;
+        assert(false);
+        return nullptr;
+    }
+    bool exists(std::string name)
+    {
+        for(auto& obs : observables){
+            if(obs.name == name){ return true; }
+        }
+        return false;
+    }
+
+    void initObservablesIfNeeded()
+    {
+        for(auto& obs : observables){
+            obs.generateIfNeeded();
+        }
+    }
+
+    void writeObservableValue(std::string name, MPS &psi)
+    {
+        if( exists(name) == true){
+            observable(name)->generateIfNeeded();
+            if(mode==oMode::b || mode==oMode::c){ std::cout << name << "= "; }
+            for(auto val : observable(name)->expectedValue(psi)){
+                std::cout << val.real() << " ";
+            }
+        } else {
+            std::cout << name;
+        }
+    }
+    void writeObservableValue(double val, MPS &psi){ std::cout << val; }
+    void writeObservableValue(cpx val, MPS &psi){ std::cout << val; }
+    void writeObservableValue(int val, MPS &psi){ std::cout << val; }
+};
+
+/////////////////////////////////////////////////
+class Controller : public ObservableContainer
 {
 public:
     clock_t  time0, timeLast;
 public:
 
     Controller() :
-        time0{ clock() }
+        ObservableContainer{ }
+      , time0{ clock() }
       , timeLast{ clock() }
     {
 
@@ -265,4 +420,6 @@ private:
 } ExpCon;
 
 #endif // INTERFACE
+
+
 

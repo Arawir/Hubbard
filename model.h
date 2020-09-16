@@ -2,6 +2,7 @@
 #define MODEL
 
 #include "itensor/all.h"
+#include "interface.h"
 
 using namespace itensor;
 
@@ -41,50 +42,78 @@ MPO hubbardHamiltonian(Electron &sites,
     return toMPO(ampo);
 }
 
-
-double calculateMzPerL(const Electron &sites, const MPS &psi)
+void prepareObservables()
 {
-    auto Mz = AutoMPO(sites);
+    ExpCon("Mz/L") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
 
-    for(int i=1; i<=psi.length(); i++){
-        Mz += 0.5/psi.length()*pow(-1,i+1),"Sz",i;
-    }
+        for(int i=1; i<=sites.length(); i++){
+            ampo += 0.5/sites.length()*pow(-1,i+1),"Sz",i;
+        }
 
-    return innerC(psi,toMPO(Mz),psi).real();
+        return toMPO(ampo);
+    };
+    ExpCon("Ms/L") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+
+        for(int i=1; i<=sites.length(); i++){
+            ampo += +1.0/2.0/sites.length()*pow(-1,i),"Nup",i;
+            ampo += -1.0/2.0/sites.length()*pow(-1,i),"Ndn",i;
+        }
+
+        return toMPO(ampo);
+    };
+    ExpCon("D/L") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+
+        for(int i=1; i<=sites.length(); i++){
+            ampo += 1.0/sites.length(),"Nupdn",i;
+        }
+
+        return toMPO(ampo);
+    };
+    ExpCon("N") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+
+        for(int i=1; i<=sites.length(); i++){
+            ampo += 1.0,"Ntot",i;
+        }
+
+        return toMPO(ampo);
+    };
+    ExpCon("D3") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+
+        ampo += 1.0/3.0,"Nupdn",1;
+        ampo += 1.0/3.0,"Nupdn",2;
+        ampo += 1.0/3.0,"Nupdn",3;
+
+        return toMPO(ampo);
+    };
+    ExpCon("N1:L") = [](const Electron &sites){
+        std::vector<MPO> out;
+
+        for(int i=1; i<=sites.length(); i++){
+            auto ampo = AutoMPO(sites);
+            ampo += 1.0,"Ntot",i;
+            out.push_back( toMPO(ampo) );
+        }
+
+        return out;
+    };
 }
 
-double calculateMsPerL(const Electron &sites, const MPS &psi)
+std::tuple<Electron,MPS,MPO,Sweeps> prepareExpBasic()
 {
-    auto Ms = AutoMPO(sites);
+    seedRNG(1);
+    auto sites = Electron( getI("L") );
+    auto psi = prepareInitState(sites);
+    auto H =hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+    auto sweeps = prepareSweepClass();
 
-    for(int i=1; i<=psi.length(); i++){
-        Ms += +1.0/2.0/psi.length()*pow(-1,i),"Nup",i;
-        Ms += -1.0/2.0/psi.length()*pow(-1,i),"Ndn",i;
-    }
-
-    return innerC(psi,toMPO(Ms),psi).real();
+    return std::make_tuple( sites,psi,H,sweeps );
 }
 
-double calculateDPerL(const Electron &sites, const MPS &psi)
-{
-    auto D = AutoMPO(sites);
-
-    for(int i=1; i<=psi.length(); i++){
-        D += 1.0/psi.length(),"Nupdn",i;
-    }
-
-    return innerC(psi,toMPO(D),psi).real();
-}
-double calculateNPerL(const Electron &sites, const MPS &psi)
-{
-    auto D = AutoMPO(sites);
-
-    for(int i=1; i<=psi.length(); i++){
-        D += 1.0/psi.length(),"Ntot",i;
-    }
-
-    return innerC(psi,toMPO(D),psi).real();
-}
 
 
 #endif // MODEL
