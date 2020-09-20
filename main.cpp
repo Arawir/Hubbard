@@ -37,21 +37,21 @@ int main(int argc, char *argv[])
 
         ExpCon.addPoint("Starting TDVP");
         for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
-            ExpCon.calc(psi,oMode::b,"t:",time,"rtime","mem","E","N","D3","dim","Ni:",oMode::a,"N1:L");
+            ExpCon.calc(psi,oMode::b,"t:",time,"rtime","dim","mem","E","N","D3","Ni:",oMode::a,"N1:L");
             tdvpStepWithBasisExtensionIfNeeded(psi,H,getD("dtime"),sweeps);
         }
     };
 
 
 
-    Params.add("t","double","0.0");
-    Params.add("U","double","0.0");
+    Params.add("t","double","1.0");
+    Params.add("U","double","8.0");
 
-    Params.add("L","int","4");
+    Params.add("L","int","40");
     Params.add("PBC","bool","0");
 
     Params.add("dtime","double","0.1");
-    Params.add("maxtime","double","1.0");
+    Params.add("maxtime","double","40.0");
 
     Params.add("Silent","bool","1");
     Params.add("cutoff","double","1E-6");
@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
     Params.add("minDim","int","1");
     Params.add("maxDim","int","100");
     Params.add("niter","int","10");
-    Params.add("state","string","Up-Dn");
-    Params.add("ConserveNf","bool","0");
+    Params.add("state","string","9*S-L/1*0");
+    Params.add("ConserveNf","bool","1");
     Params.add("ConserveSz","bool","0");
-    Params.add("exp","string","1");
+    Params.add("exp","string","timeEv");
     Params.add("ConserveQNs","bool","0");
 
     Params.add("PBSenable","bool","0");
