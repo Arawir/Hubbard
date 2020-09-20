@@ -3,15 +3,19 @@
 #include "tdvp.h"
 #include "basisextension.h"
 
-#include <complex>
-#define im std::complex<double>{0.0,1.0}
 
+void tdvpStepWithBasisExtensionIfNeeded(MPS &psi, MPO &H, double dTime, Sweeps &sweeps)
+{
+    if(maxLinkDim(psi)<10){
+       std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
+       addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",true});
+    }
+    tdvp(psi,H,im*dTime,sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
+}
 
 int main(int argc, char *argv[])
 {
     Experiments("dmrg") = [](){
-
-        ExpCon.addPoint("Initialization");
         auto [sites, psi, H, sweeps] = prepareExpBasic();
         ExpCon.setSites(sites); ExpCon("E") = H;
         ExpCon.calc(psi, oMode::b, "E","Mz/L","N");
@@ -24,33 +28,18 @@ int main(int argc, char *argv[])
     };
 
     Experiments("timeEv") = [](){
-        ExpCon.addPoint("Initialization");
-
-        auto sites = Electron(getI("L"));
-        auto H = hubbardHamiltonian(sites,getI("L"),getD("t"),getD("U"));
+        auto [sites, psi, H, sweeps] = prepareExpBasic();
         auto Hdist = hubbardHamiltonianWithDist(sites,getI("L"),getD("t"),getD("U"));
-        auto psi = prepareInitState(sites);
-        auto sweeps = prepareSweepClass();
-
         ExpCon.setSites(sites); ExpCon("E") = H;
 
         ExpCon.addPoint("Starting DMRG");
         dmrg(psi,Hdist,sweeps);
 
         ExpCon.addPoint("Starting TDVP");
-
-        double energy = innerC(psi,H,psi).real();
-
         for(double time=0; time<=getD("maxtime")+getD("dtime")+0.001; time+=getD("dtime")){
-            ExpCon.calc(psi,oMode::b,"t:",time,"E","N","D3","maxDim:",maxLinkDim(psi),"Ni:",oMode::a,"N1:L");
-
-            if(time<2*getD("dtime")){
-               std::vector<Real> epsilonK = {getD("cutoff"),getD("cutoff"),getD("cutoff")};
-               addBasis(psi,H,epsilonK,{"Cutoff",getD("cutoff"),"Method","DensityMatrix","KrylovOrd",4,"DoNormalize",true,"Quiet",getB("Silent")});
-            }
-            energy = tdvp(psi,H,im*getD("dtime"),sweeps,{"DoNormalize",true,"Quiet",true,"NumCenter",2});
+            ExpCon.calc(psi,oMode::b,"t:",time,"rtime","mem","E","N","D3","dim","Ni:",oMode::a,"N1:L");
+            tdvpStepWithBasisExtensionIfNeeded(psi,H,getD("dtime"),sweeps);
         }
-        ExpCon.addPoint("Finish");
     };
 
 
@@ -75,6 +64,9 @@ int main(int argc, char *argv[])
     Params.add("ConserveSz","bool","0");
     Params.add("exp","string","1");
     Params.add("ConserveQNs","bool","0");
+
+    Params.add("PBSenable","bool","0");
+    Params.add("PBSjobid","int","0");
 
     Params.set(argc,argv);
     prepareObservables();
