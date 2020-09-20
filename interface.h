@@ -49,7 +49,8 @@ std::string exec(const char* cmd) {
     while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
         result += buffer.data();
     }
-    return result;
+    auto pos = result.find("\n");
+    return result.substr(0,pos-1);
 }
 
 
