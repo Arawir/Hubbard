@@ -100,6 +100,36 @@ void prepareObservables()
 
         return toMPO(ampo);
     };
+    ExpCon("Ekin") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+        int L = sites.length();
+        double t = getD("t");
+
+        for(int j=1; j<L; j++){
+            ampo += -t,"Cdagup",j,"Cup",j+1;
+            ampo += +t,"Cup",j,"Cdagup",j+1;
+            ampo += -t,"Cdagdn",j,"Cdn",j+1;
+            ampo += +t,"Cdn",j,"Cdagdn",j+1;
+        }
+
+        if(Args::global().getBool("PBC")){
+            ampo += -t,"Cdagup",L,"Cup",1;
+            ampo += +t,"Cup",L,"Cdagup",1;
+            ampo += -t,"Cdagdn",L,"Cdn",1;
+            ampo += +t,"Cdn",L,"Cdagdn",1;
+        }
+
+        return toMPO(ampo);
+    };
+    ExpCon("Epot") = [](const Electron &sites){
+        auto ampo = AutoMPO(sites);
+
+        for(int j=1; j<=sites.length(); j++){
+            ampo += +getD("U"),"Nupdn",j;
+        }
+
+        return toMPO(ampo);
+    };
     ExpCon("N") = [](const Electron &sites){
         auto ampo = AutoMPO(sites);
 
@@ -124,6 +154,40 @@ void prepareObservables()
         for(int i=1; i<=sites.length(); i++){
             auto ampo = AutoMPO(sites);
             ampo += 1.0,"Ntot",i;
+            out.push_back( toMPO(ampo) );
+        }
+
+        return out;
+    };
+    ExpCon("N21:L") = [](const Electron &sites){
+        std::vector<MPO> out;
+
+        for(int i=1; i<=sites.length(); i++){
+            auto ampo = AutoMPO(sites);
+            ampo += 1.0,"Ntot",i;
+            ampo += 2.0,"Nupdn",i;
+            out.push_back( toMPO(ampo) );
+        }
+
+        return out;
+    };
+    ExpCon("Nd1:L") = [](const Electron &sites){
+        std::vector<MPO> out;
+
+        for(int i=1; i<=sites.length(); i++){
+            auto ampo = AutoMPO(sites);
+            ampo += 1.0,"Nupdn",i;
+            out.push_back( toMPO(ampo) );
+        }
+
+        return out;
+    };
+    ExpCon("Sz1:L") = [](const Electron &sites){
+        std::vector<MPO> out;
+
+        for(int i=1; i<=sites.length(); i++){
+            auto ampo = AutoMPO(sites);
+            ampo += 1.0,"Sz",i;
             out.push_back( toMPO(ampo) );
         }
 

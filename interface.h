@@ -13,15 +13,19 @@
 
 using namespace itensor;
 
+//////SET THIS////////////////////
+using SiteSetType=Electron;
+//////////////////////////////////
+
 typedef std::complex<double> cpx;
 #define im std::complex<double>{0.0,1.0}
+
 
 inline void massert(std::string info)
 {
     std::cerr << info << std::endl;
     assert(false);
 }
-
 inline double getD(std::string data)
 {
     return Args::global().getReal(data);
@@ -198,33 +202,30 @@ std::vector<std::string> separateSubBlocs(std::string str)
     }
     return out;
 }
-
-int identifyMultiplayer(std::string data)
+int identifyMultiplier(std::string data)
 {
     if(data.find("L/")!=std::string::npos){
         return getI("L")/atoi( data.substr(data.find("L/")+2).c_str() );
     }
     return atoi(data.c_str());
 }
-
-std::tuple<int,std::string> separateMultiplayer(std::string data)
+std::tuple<int,std::string> separateMultiplier(std::string data)
 {
-    int multiplayer=1;
+    int multiplier=1;
     std::string state=data;
     if(data.find("*")!=std::string::npos){
-        multiplayer = identifyMultiplayer( data.substr(0,data.find("*")) );
+        multiplier = identifyMultiplier( data.substr(0,data.find("*")) );
         state = data.substr(data.find("*")+1);
     }
 
-    return std::make_tuple( multiplayer,state );
+    return std::make_tuple( multiplier,state );
 }
-
 std::vector<std::string> expandSubBlocs(std::vector<std::string> subBlocs)
 {
     std::vector<std::string> out{};
 
     for(auto subBlock : subBlocs){
-        auto [n,state] = separateMultiplayer(subBlock);
+        auto [n,state] = separateMultiplier(subBlock);
         for(int i=0; i<n; i++){
             out.push_back(state);
         }
@@ -280,16 +281,16 @@ struct Observable
     std::vector<MPO> matrix;
     bool wasGenerated=false;
     bool useMultMpos = false;
-    std::function<MPO(const Electron &sites)> generateMPO;
-    std::function<std::vector<MPO>(const Electron &sites)> generateMPOs;
-    Electron *sites = nullptr;
+    std::function<MPO(const SiteSetType &sites)> generateMPO;
+    std::function<std::vector<MPO>(const SiteSetType &sites)> generateMPOs;
+    SiteSetType *sites = nullptr;
 
-    void operator = (std::function<MPO(const Electron &sites)> generate)
+    void operator = (std::function<MPO(const SiteSetType &sites)> generate)
     {
         generateMPO = generate;
     }
 
-    void operator = (std::function<std::vector<MPO>(const Electron &sites)> generate)
+    void operator = (std::function<std::vector<MPO>(const SiteSetType &sites)> generate)
     {
         useMultMpos=true;
         generateMPOs = generate;
