@@ -1,25 +1,19 @@
 #PBS -S /bin/bash
 #PBS -q main
 #PBS -l walltime=48:00:00
-#PBS -l select=1:ncpus=12:mem=4GB
-#PBS -N 2H
+#PBS -l select=1:ncpus=6:mem=3GB
+#PBS -N 28_10_1H
 
 cd $PBS_O_WORKDIR
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=40 >  3_1aH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=100 >  3_1bH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=200 >  3_1cH.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=80 >  28_10/1.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=100 >  28_10/2.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.1 maxDim=120 >  28_10/3.data &
 
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=40 >  3_2aH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=100 >  3_2bH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=200 >  3_2cH.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=80 >  28_10/4.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=100 >  28_10/5.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID dtime=0.05 maxDim=120 >  28_10/6.data &
 
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.1 maxDim=40 >  3_3aH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.1 maxDim=100 >  3_3bH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.1 maxDim=200 >  3_3cH.data &
 
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.05 maxDim=40 >  3_4aH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.05 maxDim=100 >  3_4bH.data &
-./Hubbard PBSenable=0 PBSjobid=$PBS_JOBID U=4.2 dtime=0.05 maxDim=200 >  3_4cH.data &
 
 wait
 
