@@ -2,24 +2,24 @@
 #PBS -q main
 #PBS -l walltime=48:00:00
 #PBS -l select=1:ncpus=12:mem=2GB
-#PBS -N 29_10_1H
+#PBS -N 29_10_2H
 
 cd $PBS_O_WORKDIR
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.1 maxDim=80   >  29_10/1a.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.1 maxDim=100  >  29_10/2a.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.1 maxDim=120  >  29_10/3a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.1 maxDim=80   >  29_10_2/1a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.1 maxDim=100  >  29_10_2/2a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.1 maxDim=120  >  29_10_2/3a.data &
 
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.05 maxDim=80  >  29_10/4a.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.05 maxDim=100 >  29_10/5a.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=2.1 dtime=0.05 maxDim=120 >  29_10/6a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.05 maxDim=80  >  29_10_2/4a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.05 maxDim=100 >  29_10_2/5a.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=2.1 dtime=0.05 maxDim=120 >  29_10_2/6a.data &
 
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.1 maxDim=80   >  29_10/1b.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.1 maxDim=100  >  29_10/2b.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.1 maxDim=120  >  29_10/3b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.1 maxDim=80   >  29_10_2/1b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.1 maxDim=100  >  29_10_2/2b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.1 maxDim=120  >  29_10_2/3b.data &
 
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.05 maxDim=80  >  29_10/4b.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.05 maxDim=100 >  29_10/5b.data &
-./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID t=0.5 U=4.2 dtime=0.05 maxDim=120 >  29_10/6b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.05 maxDim=80  >  29_10_2/4b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.05 maxDim=100 >  29_10_2/5b.data &
+./Hubbard PBSenable=1 PBSjobid=$PBS_JOBID exp=TimeEv state=L/2*Up-L/2*Dn t=0.5 U=4.2 dtime=0.05 maxDim=120 >  29_10_2/6b.data &
 
 wait
 
